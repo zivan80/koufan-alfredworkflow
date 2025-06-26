@@ -1,0 +1,80 @@
+name: Build Alfred Workflow
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  build:
+    runs-on: macos-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Validate workflow structure
+      run: |
+        echo "Checking workflow structure..."
+        
+        # 检查必要文件是否存在
+        required_files=(
+          "src/info.plist"
+          "src/handle_action.py"
+          "src/settings.py"
+          "src/translate.py"
+          "src/translate_filter_v2.py"
+        )
+        
+        for file in "${required_files[@]}"; do
+          if [ ! -f "$file" ]; then
+            echo "❌ Missing required file: $file"
+            exit 1
+          else
+            echo "✅ Found: $file"
+          fi
+        done
+        
+    - name: Check Python syntax
+      run: |
+        echo "Checking Python syntax..."
+        python3 -m py_compile src/*.py
+        echo "✅ All Python files have valid syntax"
+        
+    - name: Validate info.plist
+      run: |
+        echo "Validating info.plist..."
+        plutil -lint src/info.plist
+        echo "✅ info.plist is valid"
+        
+    - name: Test build workflow package
+      run: |
+        echo "Testing workflow package creation..."
+        
+        # 创建临时目录
+        mkdir -p build
+        
+        # 复制所有源文件
+        cp -r src/* build/
+        
+        # 创建测试包
+        cd build
+        zip -r "../test-alfred-translator.alfredworkflow" .
+        cd ..
+        
+        # 验证包创建成功
+        if [ -f "test-alfred-translator.alfredworkflow" ]; then
+          echo "✅ Workflow package created successfully"
+          echo "Package size: $(ls -lh test-alfred-translator.alfredworkflow | awk '{print $5}')"
+        else
+          echo "❌ Failed to create workflow package"
+          exit 1
+        fi
+        
+    - name: Upload build artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: alfred-translator-build
+        path: test-alfred-translator.alfredworkflow
+        retention-days: 7

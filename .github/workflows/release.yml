@@ -1,0 +1,97 @@
+name: Build and Release Alfred Workflow
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version number (e.g., v0.1.0)'
+        required: true
+        default: 'v0.1.0'
+
+jobs:
+  build:
+    runs-on: macos-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Set version
+      id: version
+      run: |
+        if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+          echo "VERSION=${{ github.event.inputs.version }}" >> $GITHUB_OUTPUT
+        else
+          echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+        fi
+        
+    - name: Update version in info.plist
+      run: |
+        VERSION="${{ steps.version.outputs.VERSION }}"
+        VERSION_NUMBER="${VERSION#v}"
+        
+        # 更新info.plist中的版本号
+        sed -i '' "s/<string>1.0<\/string>/<string>$VERSION_NUMBER<\/string>/g" src/info.plist
+        
+        # 确认更改
+        echo "Updated version in info.plist:"
+        grep -A1 -B1 "version" src/info.plist || true
+        
+    - name: Create Alfred Workflow package
+      run: |
+        # 创建临时目录
+        mkdir -p build
+        
+        # 复制所有源文件到临时目录
+        cp -r src/* build/
+        
+        # 创建.alfredworkflow文件（实际上是zip文件）
+        cd build
+        zip -r "../alfred-translator-${{ steps.version.outputs.VERSION }}.alfredworkflow" .
+        cd ..
+        
+        # 验证文件创建
+        ls -la alfred-translator-*.alfredworkflow
+        
+    - name: Create Release
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ steps.version.outputs.VERSION }}
+        release_name: Alfred 中英翻译工具 ${{ steps.version.outputs.VERSION }}
+        body: |
+          ## 更新内容
+          
+          ### 新功能
+          - 中文到英文翻译
+          - 语音朗读功能
+          - 翻译结果缓存
+          - 可配置的API设置
+          
+          ### 安装方法
+          1. 下载下方的 `.alfredworkflow` 文件
+          2. 双击文件自动安装到Alfred
+          3. 使用 `tset` 命令配置API密钥
+          
+          ### 使用方法
+          - `t [中文文本]` - 翻译中文到英文
+          - `⌘ + 回车` - 朗读翻译结果
+          
+          完整文档请查看 [README.md](https://github.com/${{ github.repository }}/blob/main/README.md)
+        draft: false
+        prerelease: false
+        
+    - name: Upload Release Asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: ./alfred-translator-${{ steps.version.outputs.VERSION }}.alfredworkflow
+        asset_name: alfred-translator-${{ steps.version.outputs.VERSION }}.alfredworkflow
+        asset_content_type: application/zip

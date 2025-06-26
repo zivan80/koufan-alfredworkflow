@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>bundleid</key>
+	<string>com.translator.alfred</string>
+	<key>category</key>
+	<string>Productivity</string>
+	<key>connections</key>
+	<dict>
+		<key>TRANSLATE_FILTER_UID</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>HANDLE_ACTION_UID</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>HANDLE_ACTION_UID</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>COPY_TO_CLIPBOARD_UID</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+		<key>SETTINGS_UID</key>
+		<array>
+			<dict>
+				<key>destinationuid</key>
+				<string>SETTINGS_SCRIPT_UID</string>
+				<key>modifiers</key>
+				<integer>0</integer>
+				<key>modifiersubtext</key>
+				<string></string>
+				<key>vitoclose</key>
+				<false/>
+			</dict>
+		</array>
+	</dict>
+	<key>createdby</key>
+	<string>zivan &amp; Claude (Anthropic)</string>
+	<key>description</key>
+	<string>快速翻译中文为口语化英文并复制到剪贴板</string>
+	<key>disabled</key>
+	<false/>
+	<key>name</key>
+	<string>口语翻译</string>
+	<key>objects</key>
+	<array>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>alfredfiltersresults</key>
+				<false/>
+				<key>alfredfiltersresultsmatchmode</key>
+				<integer>0</integer>
+				<key>argumenttreatemptyqueryasnil</key>
+				<true/>
+				<key>argumenttrimmode</key>
+				<integer>0</integer>
+				<key>argumenttype</key>
+				<integer>1</integer>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>keyword</key>
+				<string>t</string>
+				<key>queuedelaycustom</key>
+				<integer>3</integer>
+				<key>queuedelayimmediatelyinitially</key>
+				<true/>
+				<key>queuedelaymode</key>
+				<integer>0</integer>
+				<key>queuemaxresults</key>
+				<integer>1</integer>
+				<key>runningsubtext</key>
+				<string>正在翻译...</string>
+				<key>script</key>
+				<string>python3 translate_filter_v2.py "$1"</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>subtext</key>
+				<string>输入中文文本进行翻译</string>
+				<key>title</key>
+				<string>口语翻译</string>
+				<key>type</key>
+				<integer>0</integer>
+				<key>withspace</key>
+				<true/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.scriptfilter</string>
+			<key>uid</key>
+			<string>TRANSLATE_FILTER_UID</string>
+			<key>version</key>
+			<integer>3</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>script</key>
+				<string>python3 handle_action.py "$1"</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>type</key>
+				<integer>0</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>HANDLE_ACTION_UID</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>autopaste</key>
+				<false/>
+				<key>clipboardtext</key>
+				<string>{query}</string>
+				<key>ignoredynamicplaceholders</key>
+				<false/>
+				<key>transient</key>
+				<false/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.output.clipboard</string>
+			<key>uid</key>
+			<string>COPY_TO_CLIPBOARD_UID</string>
+			<key>version</key>
+			<integer>3</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>argumenttype</key>
+				<integer>2</integer>
+				<key>keyword</key>
+				<string>tset</string>
+				<key>subtext</key>
+				<string>配置API设置</string>
+				<key>text</key>
+				<string>翻译设置</string>
+				<key>withspace</key>
+				<false/>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.input.keyword</string>
+			<key>uid</key>
+			<string>SETTINGS_UID</string>
+			<key>version</key>
+			<integer>1</integer>
+		</dict>
+		<dict>
+			<key>config</key>
+			<dict>
+				<key>concurrently</key>
+				<false/>
+				<key>escaping</key>
+				<integer>102</integer>
+				<key>script</key>
+				<string>python3 settings.py</string>
+				<key>scriptargtype</key>
+				<integer>1</integer>
+				<key>scriptfile</key>
+				<string></string>
+				<key>type</key>
+				<integer>0</integer>
+			</dict>
+			<key>type</key>
+			<string>alfred.workflow.action.script</string>
+			<key>uid</key>
+			<string>SETTINGS_SCRIPT_UID</string>
+			<key>version</key>
+			<integer>2</integer>
+		</dict>
+	</array>
+	<key>readme</key>
+	<string># 口语翻译 Alfred Workflow
+
+一个实用的Alfred Workflow，用于快速将中文翻译为口语化英文并复制到剪贴板。
+
+## 使用方法
+
+### 翻译文本
+```
+t 你好世界
+```
+输入后会实时显示翻译结果，按回车复制到剪贴板。
+
+### 配置设置
+```
+tset
+```
+打开设置菜单进行配置。
+
+## 功能特点
+
+- 🚀 实时翻译预览
+- 🎯 口语化翻译优化
+- 📋 自动复制到剪贴板
+- ⚙️ 支持自定义API和模型
+- 🔄 自动获取模型列表
+
+## 作者
+
+zivan &amp; Claude (Anthropic)</string>
+	<key>uidata</key>
+	<dict>
+		<key>COPY_TO_CLIPBOARD_UID</key>
+		<dict>
+			<key>xpos</key>
+			<real>600</real>
+			<key>ypos</key>
+			<real>125</real>
+		</dict>
+		<key>HANDLE_ACTION_UID</key>
+		<dict>
+			<key>xpos</key>
+			<real>400</real>
+			<key>ypos</key>
+			<real>125</real>
+		</dict>
+		<key>SETTINGS_SCRIPT_UID</key>
+		<dict>
+			<key>xpos</key>
+			<real>400</real>
+			<key>ypos</key>
+			<real>250</real>
+		</dict>
+		<key>SETTINGS_UID</key>
+		<dict>
+			<key>xpos</key>
+			<real>200</real>
+			<key>ypos</key>
+			<real>250</real>
+		</dict>
+		<key>TRANSLATE_FILTER_UID</key>
+		<dict>
+			<key>xpos</key>
+			<real>200</real>
+			<key>ypos</key>
+			<real>125</real>
+		</dict>
+	</dict>
+	<key>version</key>
+	<string>2.2.0</string>
+	<key>webaddress</key>
+	<string></string>
+</dict>
+</plist>
