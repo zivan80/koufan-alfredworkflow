@@ -42,6 +42,9 @@ config.local.*
 debug/
 *.alfredworkflow
 
+# 脚本目录
+scripts/
+
 # 其他不需要版本控制的文件
 TODO.md
 NOTES.md
