@@ -19,7 +19,7 @@
 ## 安装方法
 
 ### 方法一：下载Release版本
-1. 前往 [Releases页面](https://github.com/zivan80/alfred-translator/releases)
+1. 前往 [Releases页面](https://github.com/zivan80/koufan-alfredworkflow/releases)
 2. 下载最新版本的 `.alfredworkflow` 文件
 3. 双击文件自动安装到Alfred
 
