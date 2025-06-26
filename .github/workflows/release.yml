@@ -62,18 +62,18 @@ jobs:
         
         # 创建.alfredworkflow文件（实际上是zip文件）
         cd build
-        zip -r "../alfred-translator-${{ steps.version.outputs.VERSION }}.alfredworkflow" .
+        zip -r "../koufan-alfredworkflow-${{ steps.version.outputs.VERSION }}.alfredworkflow" .
         cd ..
         
         # 验证文件创建
-        ls -la alfred-translator-*.alfredworkflow
+        ls -la koufan-alfredworkflow-*.alfredworkflow
         
     - name: Create Release and Upload Asset
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       run: |
         VERSION="${{ steps.version.outputs.VERSION }}"
-        RELEASE_FILE="alfred-translator-${VERSION}.alfredworkflow"
+        RELEASE_FILE="koufan-alfredworkflow-${VERSION}.alfredworkflow"
         
         # 创建release notes文件
         cat > release_notes.md << EOF
